@@ -30,8 +30,7 @@ let questions = [
   "Are all safety barriers and signage in place? ", 
   
 ]
-let count = 0
-let canA = false
+let count = 0 
 app.post('/ussd', (req, res) => {
   
   
@@ -49,9 +48,8 @@ app.post('/ussd', (req, res) => {
       response = `CON What would you like to check
       1. Safety standup;
       2. leave`
-      count = 0;
-      canA = true
-  } else if ( text == '1' && canA) {
+      count = 0; 
+  } else if ( text == '1' || text == '2') {
       // Business logic for first level response
       response = `CON${questions[count]}
       1. yes
