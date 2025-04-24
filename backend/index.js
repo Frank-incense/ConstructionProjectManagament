@@ -5,9 +5,19 @@ const port = 3000;
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
-})
-app.post('/ussd/post', (req, res) => {
-  return res.status(200).send('Hello Post')
+});
+app.post('/incoming-messages', (req, res) => {
+    const data = req.body;
+    console.log(`Received message: \n ${data}`);
+    res.sendStatus(200);
+});
+
+const sendSMS = require('./sendSMS');
+
+sendSMS();
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
 })
 
 app.post('/ussd', (req, res) => {

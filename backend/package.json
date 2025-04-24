@@ -10,7 +10,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+<<<<<<< HEAD
     "express": "^5.1.0",
     "nodemon": "^3.1.10"
+=======
+    "africastalking": "^0.7.3",
+    "express": "^5.1.0"
+>>>>>>> 5248a53 (SMS sending function complete and tested)
   }
 }
