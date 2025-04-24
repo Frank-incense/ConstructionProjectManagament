@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express();
-const bodyParser = require("body-parser");
 app.use(express.json());
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -20,10 +19,6 @@ app.post('/incoming-messages', (req, res) => {
 const sendSMS = require('./sendSMS');
 
 sendSMS();
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
 let questions = [
   "Are you wearing your full PPE?",
   "Have you inspected your tools & equipment?",
