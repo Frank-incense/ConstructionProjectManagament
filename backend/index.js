@@ -1,12 +1,13 @@
 const express = require('express')
-const app = express()
-const port = 3000
+const app = express();
+app.use(express.json());
+const port = 3000;
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 app.post('/ussd/post', (req, res) => {
-  res.status(200)
+  return res.status(200).send('Hello Post')
 })
 
 app.post('/ussd', (req, res) => {
@@ -44,7 +45,5 @@ app.post('/ussd', (req, res) => {
   res.set('Content-Type: text/plain');
   res.send(response);
 });
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+ 
+module.exports = app;
