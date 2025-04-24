@@ -1,6 +1,10 @@
 const express = require('express')
 const app = express();
+const bodyParser = require("body-parser");
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
 const port = 3000;
 
 app.get('/', (req, res) => {
@@ -12,6 +16,7 @@ app.post('/ussd/post', (req, res) => {
 
 app.post('/ussd', (req, res) => {
   // Read the variables sent via POST from our API
+  console.log(req.body)
   const {
       sessionId,
       serviceCode,
