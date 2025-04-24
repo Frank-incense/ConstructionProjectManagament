@@ -28,4 +28,4 @@ const safteySchema = new mongoose.Schema({
   questions: [QuestionSchema]
 });
 
-module.exports = mongoose.model('workOrders', workOrderSchema);
+module.exports = mongoose.model('SafteySchema', safteySchema);
