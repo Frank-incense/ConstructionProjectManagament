@@ -1,21 +1,32 @@
-const express = require('express')
-const bodyParser = require('body-parser');
+const express = require('express');
+const sendSMS = require('./sendSMS');
+const mongoose = require('mongoose');
+const router = require('./routes')
+require('dotenv').config();
+
 const app = express();
 app.use(express.json());
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+const port = 3001;
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error(err));
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 });
+
 app.post('/incoming-messages', (req, res) => {
     const data = req.body;
     console.log(`Received message: \n ${data}`);
     res.sendStatus(200);
 });
 
-const sendSMS = require('./sendSMS');
+app.use('/', router)
 
 sendSMS();
 let questions = [
