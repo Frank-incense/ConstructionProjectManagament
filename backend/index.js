@@ -31,6 +31,7 @@ let questions = [
   
 ]
 let count = 0
+let canA = false
 app.post('/ussd', (req, res) => {
   
   
@@ -49,7 +50,8 @@ app.post('/ussd', (req, res) => {
       1. Safety standup;
       2. leave`
       count = 0;
-  } else if ( text == '1') {
+      canA = true
+  } else if ( text == '1' && canA) {
       // Business logic for first level response
       response = `CON${questions[count]}
       1. yes
