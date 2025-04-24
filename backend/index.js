@@ -1,7 +1,8 @@
 const express = require('express')
+const bodyParser = require('body-parser');
 const app = express();
 app.use(express.json());
-const bodyParser = require('body-parser');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const port = 3000;
@@ -30,7 +31,7 @@ let questions = [
   "Are all safety barriers and signage in place? ", 
   
 ]
-let count = 0
+let count = 0 
 app.post('/ussd', (req, res) => {
   
   
@@ -48,13 +49,20 @@ app.post('/ussd', (req, res) => {
       response = `CON What would you like to check
       1. Safety standup;
       2. leave`
-      count = 0;
+      count = 0; 
   } else if ( text == '1') {
       // Business logic for first level response
-      response = `CON${questions[count]}
+      response = `CON ${questions[count]}
       1. yes
       2. no`; 
-      count++
+      count++;
+  }else if(text == '2' && count === 0){
+    response = `END bye ${phoneNumber} `; 
+  }else if(text == '2'  && count > 0){
+    response = `CON ${questions[count]}
+      1. yes
+      2. no`; 
+      count++;
   }
   // } else if ( text == '1*1') {
   //     // This is a second level response where the user selected 1 in the first instance
