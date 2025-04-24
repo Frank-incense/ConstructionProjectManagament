@@ -1,24 +1,27 @@
 // src/components/OrderModal.jsx
 import React from "react";
 import { useFormik } from "formik";
+import usePostOrders from "../hooks/usePost";
 
 const validate = (values) => {
   const errors = {};
   if (!values.name) {
     errors.name = "Required";
   }
-  if (!values.amount) {
-    errors.amount = "Required";
-  }
   if (!values.delivery) {
     errors.delivery = "Required";
-  } else if (isNaN(values.delivery) || values.delivery <= 0) {
-    errors.delivery = "delivery must be a positive number";
+  }
+  if (!values.amount) {
+    errors.amount = "Required";
+  } else if (isNaN(values.amount) || values.amount <= 0) {
+    errors.amount = "Delivery must be a positive number";
   }
   return errors;
 };
 
-const OrderModal = ({ isOpen, onClose, onSubmit }) => {
+const OrderModal = ({ isOpen, onClose }) => {
+  const { postOrder, isPosting, errorOnPost, successMsg } = usePostOrders();
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -28,8 +31,9 @@ const OrderModal = ({ isOpen, onClose, onSubmit }) => {
       status: "",
     },
     validate,
-    onSubmit: (values) => {
-      onSubmit(values);
+    onSubmit: async (values, { resetForm }) => {
+      await postOrder(values);
+      resetForm();
       onClose();
     },
   });
@@ -47,33 +51,40 @@ const OrderModal = ({ isOpen, onClose, onSubmit }) => {
           <form onSubmit={formik.handleSubmit}>
             <div className="modal-header">
               <h5 className="modal-title">Add New Order</h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={onClose}
-              ></button>
+              <button type="button" className="btn-close" onClick={onClose}></button>
             </div>
             <div className="modal-body">
+              {/* Status Messages */}
+              {isPosting && (
+                <div className="alert alert-info">Posting order...</div>
+              )}
+              {errorOnPost && (
+                <div className="alert alert-danger">{errorOnPost}</div>
+              )}
+              {successMsg && (
+                <div className="alert alert-success">{successMsg}</div>
+              )}
+
+              {/* Form Fields */}
               <div className="mb-3">
                 <label className="form-label">Name</label>
                 <input
                   type="text"
                   name="name"
                   className={`form-control ${
-                    formik.touched.name && formik.errors.name
-                      ? "is-invalid"
-                      : ""
+                    formik.touched.name && formik.errors.name ? "is-invalid" : ""
                   }`}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.name}
                 />
-                {formik.touched.name && formik.errors.name ? (
+                {formik.touched.name && formik.errors.name && (
                   <div className="invalid-feedback">{formik.errors.name}</div>
-                ) : null}
+                )}
               </div>
+
               <div className="mb-3">
-                <label className="form-label">amount</label>
+                <label className="form-label">Amount</label>
                 <input
                   type="text"
                   name="amount"
@@ -86,10 +97,11 @@ const OrderModal = ({ isOpen, onClose, onSubmit }) => {
                   onBlur={formik.handleBlur}
                   value={formik.values.amount}
                 />
-                {formik.touched.amount && formik.errors.amount ? (
+                {formik.touched.amount && formik.errors.amount && (
                   <div className="invalid-feedback">{formik.errors.amount}</div>
-                ) : null}
+                )}
               </div>
+
               <div className="mb-3">
                 <label className="form-label">Supplier</label>
                 <input
@@ -104,10 +116,11 @@ const OrderModal = ({ isOpen, onClose, onSubmit }) => {
                   onBlur={formik.handleBlur}
                   value={formik.values.supplier}
                 />
-                {formik.touched.supplier && formik.errors.supplier ? (
+                {formik.touched.supplier && formik.errors.supplier && (
                   <div className="invalid-feedback">{formik.errors.supplier}</div>
-                ) : null}
+                )}
               </div>
+
               <div className="mb-3">
                 <label className="form-label">Status</label>
                 <select
@@ -125,15 +138,15 @@ const OrderModal = ({ isOpen, onClose, onSubmit }) => {
                   <option value="Pending">Pending</option>
                   <option value="Completed">Completed</option>
                 </select>
-                {formik.touched.status && formik.errors.status ? (
+                {formik.touched.status && formik.errors.status && (
                   <div className="invalid-feedback">{formik.errors.status}</div>
-                ) : null}
+                )}
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Delivery</label>
                 <input
-                  type="number"
+                  type="date"
                   name="delivery"
                   className={`form-control ${
                     formik.touched.delivery && formik.errors.delivery
@@ -144,13 +157,12 @@ const OrderModal = ({ isOpen, onClose, onSubmit }) => {
                   onBlur={formik.handleBlur}
                   value={formik.values.delivery}
                 />
-                {formik.touched.delivery && formik.errors.delivery ? (
-                  <div className="invalid-feedback">
-                    {formik.errors.delivery}
-                  </div>
-                ) : null}
+                {formik.touched.delivery && formik.errors.delivery && (
+                  <div className="invalid-feedback">{formik.errors.delivery}</div>
+                )}
               </div>
             </div>
+
             <div className="modal-footer">
               <button
                 type="button"
@@ -159,8 +171,19 @@ const OrderModal = ({ isOpen, onClose, onSubmit }) => {
               >
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
-                Add Order
+              <button type="submit" className="btn btn-primary" disabled={isPosting}>
+                {isPosting ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Adding...
+                  </>
+                ) : (
+                  "Add Order"
+                )}
               </button>
             </div>
           </form>
