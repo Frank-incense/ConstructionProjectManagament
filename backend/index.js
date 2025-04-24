@@ -5,8 +5,6 @@ app.use(express.json());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-const port = 3000;
-
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -20,10 +18,6 @@ app.post('/incoming-messages', (req, res) => {
 const sendSMS = require('./sendSMS');
 
 sendSMS();
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
 let questions = [
   "Are you wearing your full PPE?",
   "Have you inspected your tools & equipment?",
@@ -32,6 +26,7 @@ let questions = [
   
 ]
 let count = 0 
+let responses ={}
 app.post('/ussd', (req, res) => {
   
   
@@ -51,6 +46,7 @@ app.post('/ussd', (req, res) => {
       2. leave`
       count = 0; 
   } else if ( text == '1') {
+      
       // Business logic for first level response
       response = `CON ${questions[count]}
       1. yes
@@ -63,14 +59,9 @@ app.post('/ussd', (req, res) => {
       1. yes
       2. no`; 
       count++;
+  }else{
+    response = `END bye ${phoneNumber} `; 
   }
-  // } else if ( text == '1*1') {
-  //     // This is a second level response where the user selected 1 in the first instance
-  //     const accountNumber = 'ACC100101';
-  //     // This is a terminal request. Note how we start the response with END
-  //     response = `END Your account number is ${accountNumber}`;
-  //     count++
-  // }
 
   // Send the response back to the API
   res.set('Content-Type: text/plain');

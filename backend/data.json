@@ -1,0 +1,23 @@
+{
+    "phoneNumber": "0759233322",
+    "sessionId":"",
+    "question": [
+        {
+            "id": 1,
+            "question": "Did you where PPE",
+            "answer": "yes"
+        },
+        {
+            "question": "Did you where PPE",
+            "answer": "yes"
+        },
+        {
+            "question": "Did you where PPE",
+            "answer": "yes"
+        },
+        {
+            "question": "Did you where PPE",
+            "answer": "yes"
+        }
+    ]
+}
