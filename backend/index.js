@@ -2,6 +2,7 @@ const express = require('express');
 const sendSMS = require('./sendSMS');
 const mongoose = require('mongoose');
 const router = require('./routes')
+const workOrder = require('./dataSchema/workOrderScheme');
 require('dotenv').config();
 
 const app = express();
@@ -104,5 +105,50 @@ app.post('/ussd', (req, res) => {
   res.set('Content-Type: text/plain');
   res.send(response);
 });
+ 
+
+
+app.post('/ussd/job', async(req, res) =>{
+
+  let response = '';
+
+  const {
+    sessionId,
+    serviceCode,
+    phoneNumber,
+    text,
+  } = req.body;
+  if (text == '') { 
+    response = `CON would you like to request job details?
+    yes: enter user-number
+    2. No`
+
+
+    count = 0; 
+  }
+  else if(text == 2) {
+
+    response = `END goodbye!`
+
+  }
+  else if(!(text == 2)){
+
+    console.log("testing to see if it got to this point...")
+    
+    const workorderDetails = await workOrder.find({userNumber: text});
+
+    if (workorderDetails.length===0) {
+      response = `END you have no work orders!`
+    }else{
+      response = `END ${workorderDetails.map((order)=>{
+        return `${order.description}-${order.status}`;
+      })}`
+    }
+    
+  }
+ 
+  res.set('Content-Type: text/plain');
+  res.send(response);
+})
  
 module.exports = app;
