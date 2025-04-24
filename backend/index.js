@@ -5,8 +5,6 @@ app.use(express.json());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-const port = 3000;
-
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -20,10 +18,6 @@ app.post('/incoming-messages', (req, res) => {
 const sendSMS = require('./sendSMS');
 
 sendSMS();
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
 let questions = [
   "Are you wearing your full PPE?",
   "Have you inspected your tools & equipment?",
