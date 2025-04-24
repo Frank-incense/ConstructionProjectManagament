@@ -39,8 +39,8 @@ let questions = [
 let count = 0 
 let responses ={}
 app.post('/ussd', (req, res) => {
-  
-  
+  // Read the variables sent via POST from our API
+  console.log(req.body)
   const {
       sessionId,
       serviceCode,
