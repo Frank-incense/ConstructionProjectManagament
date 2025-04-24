@@ -5,6 +5,8 @@ app.use(express.json());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+const port = 3000;
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -19,15 +21,20 @@ const sendSMS = require('./sendSMS');
 
 sendSMS();
 
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
+let questions = [
+  "Are you wearing your full PPE?",
+  "Have you inspected your tools & equipment?",
+  "Are there any new hazards observed today? ",
+  "Are all safety barriers and signage in place? ", 
+  
+]
+let count = 0 
 app.post('/ussd', (req, res) => {
-  let questions = [
-    "Are you wearing your full PPE?",
-    "Have you inspected your tools & equipment?",
-    "Are there any new hazards observed today? ",
-    "Are all safety barriers and signage in place? ", 
-  ]
-  let count = 0
-  let canA = false
+  
+  
   const {
       sessionId,
       serviceCode,
@@ -41,29 +48,33 @@ app.post('/ussd', (req, res) => {
       // This is the first request. Note how we start the response with CON
       response = `CON What would you like to check
       1. Safety standup;
-      2. leave`;
-      count = 0;
-      canA = true;
+      2. leave`
+      count = 0; 
   } else if ( text == '1') {
       // Business logic for first level response
       response = `CON ${questions[count]}
       1. yes
       2. no`; 
-      count++
-  }else if ( text == '2') {
-    // Business logic for first level response
+      count++;
+  }else if(text == '2' && count === 0){
+    response = `END bye ${phoneNumber} `; 
+  }else if(text == '2'  && count > 0){
     response = `CON ${questions[count]}
-    1. yes
-    2. no`; 
-    count++
-  }else{
-    console.log('did not get to the end!!1')
-    return res.status(500).send('did not get to the end!!1')
+      1. yes
+      2. no`; 
+      count++;
   }
+  // } else if ( text == '1*1') {
+  //     // This is a second level response where the user selected 1 in the first instance
+  //     const accountNumber = 'ACC100101';
+  //     // This is a terminal request. Note how we start the response with END
+  //     response = `END Your account number is ${accountNumber}`;
+  //     count++
+  // }
 
   // Send the response back to the API
   res.set('Content-Type: text/plain');
-  return res.send(response);
+  res.send(response);
 });
  
 module.exports = app;
